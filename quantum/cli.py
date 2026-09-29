@@ -107,6 +107,56 @@ def status():
     console.print(table)
 
 
+@app.command("colab")
+def generate_colab_notebook(
+    output: str = typer.Option("colab_train.ipynb", "--output", "-o", help="Caminho do arquivo .ipynb a ser gerado"),
+    model_id: str = typer.Option("unsloth/Qwen2.5-Coder-7B-Instruct-bnb-4bit", "--model", "-m", help="ID do modelo base Unsloth"),
+    epochs: int = typer.Option(3, "--epochs", "-e", help="Numero de epocas"),
+    lora_r: int = typer.Option(16, "--lora-r", "-r", help="Rank LoRA"),
+    batch_size: int = typer.Option(2, "--batch-size", "-b", help="Batch size por dispositivo"),
+    seq_len: int = typer.Option(2048, "--seq-len", "-s", help="Max sequence length"),
+):
+    """Gera diretamente um notebook Jupyter (.ipynb) pronto para rodar no Google Colab."""
+    generator = RecipeGenerator()
+    recipe = {
+        "base_model": model_id,
+        "quantization": "4bit",
+        "chat_template": "chatml",
+        "hyperparameters": {
+            "lora_r": lora_r,
+            "lora_alpha": lora_r * 2,
+            "lora_dropout": 0.05,
+            "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+            "learning_rate": 2e-4,
+            "num_train_epochs": epochs,
+            "per_device_train_batch_size": batch_size,
+            "gradient_accumulation_steps": 4,
+            "max_seq_length": seq_len,
+            "warmup_ratio": 0.05,
+            "weight_decay": 0.01,
+            "optimizer": "paged_adamw_8bit",
+            "lr_scheduler_type": "cosine",
+            "logging_steps": 1,
+        }
+    }
+    out_path = Path(output)
+    generator._write_colab_notebook(recipe, output_path=out_path)
+    rprint(Panel.fit(
+        f"[bold green]Notebook Google Colab gerado com sucesso![/bold green]\n\n"
+        f"[cyan]Arquivo:[/cyan] [bold]{out_path.name}[/bold]\n"
+        f"[cyan]Modelo Base:[/cyan] {model_id}\n"
+        f"[cyan]Quantizacao:[/cyan] 4-bit QLoRA (NF4)\n"
+        f"[cyan]Max Seq Length:[/cyan] {seq_len}\n\n"
+        f"[yellow]Como usar no Google Colab:[/yellow]\n"
+        f"  1. Acesse [link=https://colab.research.google.com]https://colab.research.google.com[/link]\n"
+        f"  2. Clique em 'Fazer Upload' e selecione [bold]{out_path.name}[/bold]\n"
+        f"  3. Va em Ambiente de Execucao > Alterar tipo e selecione GPU T4 (Gratuito) ou A100\n"
+        f"  4. Execute as celulas sequencialmente com 1 clique!",
+        title="Google Colab Ready",
+        border_style="green"
+    ))
+
+
 # ==============================================================================
 # ETAPA 1: INTENÇÃO
 # ==============================================================================
