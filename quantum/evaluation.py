@@ -132,8 +132,8 @@ class Evaluator:
 
 | Métrica | Régua Baseline (Zero-Shot) | Modelo Fine-Tuned | Ganho Real (Delta) | Meta Congelada | Status |
 |---|:---:|:---:|:---:|:---:|:---:|
-| **Acurácia da Tarefa** | {m["baseline"]["accuracy"]*100:.1f}% | **{m["fine_tuned"]["accuracy"]*100:.1f}%** | `+{m["delta"]["accuracy_gain"]*100:+.1f}%` | >={m["targets"]["min_accuracy"]*100:.1f}% | {"✅ Aprovado" if report["checks"]["accuracy_check"]["passed"] else "❌ Reprovado"} |
-| **Taxa de JSON Válido** | {m["baseline"]["valid_json_rate"]*100:.1f}% | **{m["fine_tuned"]["valid_json_rate"]*100:.1f}%** | `+{m["delta"]["valid_json_gain"]*100:+.1f}%` | >={m["targets"]["min_valid_json_rate"]*100:.1f}% | {"✅ Aprovado" if report["checks"]["valid_json_check"]["passed"] else "❌ Reprovado"} |
+| **Acurácia da Tarefa** | {m["baseline"]["accuracy"]*100:.1f}% | **{m["fine_tuned"]["accuracy"]*100:.1f}%** | `{m["delta"]["accuracy_gain"]*100:+.1f}%` | >={m["targets"]["min_accuracy"]*100:.1f}% | {"✅ Aprovado" if report["checks"]["accuracy_check"]["passed"] else "❌ Reprovado"} |
+| **Taxa de JSON Válido** | {m["baseline"]["valid_json_rate"]*100:.1f}% | **{m["fine_tuned"]["valid_json_rate"]*100:.1f}%** | `{m["delta"]["valid_json_gain"]*100:+.1f}%` | >={m["targets"]["min_valid_json_rate"]*100:.1f}% | {"✅ Aprovado" if report["checks"]["valid_json_check"]["passed"] else "❌ Reprovado"} |
 
 ---
 
