@@ -43,6 +43,7 @@ from quantum.trainer import TrainingOrchestrator
 from quantum.evaluation import Evaluator
 from quantum.exporter import ModelExporter
 from quantum.delivery import Deliverer
+from quantum.wizard import QuantumWizard
 
 
 app = typer.Typer(
@@ -57,6 +58,13 @@ app.add_typer(stage_app, name="stage")
 app.add_typer(workflow_app, name="workflow")
 
 console = Console(legacy_windows=False)
+
+
+@app.command("wizard")
+def run_wizard():
+    """Inicia o Assistente Interativo (Wizard) passo a passo para as 11 etapas."""
+    wiz = QuantumWizard()
+    wiz.run()
 
 
 @app.command()
